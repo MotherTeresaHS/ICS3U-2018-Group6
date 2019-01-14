@@ -20,8 +20,8 @@ class SplashScene: SKScene {
         /* Setup your scene here */
         self.backgroundColor = SKColor(red: 0.0, green:0.0, blue:0.0, alpha: 1.0)
         splashSceneBackground.name = "splash scene background"
-        splashSceneBackground.position = CGPoint(x: frame.midX, y: frame.midY)
-        splashSceneBackground.size = CGSize(width: frame.maxX, height: frame.maxY)
+        splashSceneBackground.size = CGSize(width: frame.maxX, height: frame.maxY - 200)
+        splashSceneBackground.position = CGPoint(x: frame.midX, y: frame.midY - 100)
         self.addChild(splashSceneBackground)
         
         splashSceneBackground.run(moveToNextSceneDelay) {
@@ -292,7 +292,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
     let highscoreLabel = SKLabelNode(fontNamed: "Avenir-BlackOblique")
     
     let moveToNextSceneDelay = SKAction.wait(forDuration: 1)
-    let changeAnimationImageDelay = SKAction.wait(forDuration: 0.1)
+    let changeAnimationImageDelay = SKAction.wait(forDuration: 1.5)
     
     var score : Int = 0
     var highscoreValue : Int = 0
@@ -321,8 +321,6 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
                                         SKTexture(imageNamed: "Nt9.png"),
                                         SKTexture(imageNamed: "Nt10.png")
                                         ]
-    var ninjaIdle = true
-    var ninjaShooting = false
     
     let enemyWalkingArray : [SKTexture] = [SKTexture(imageNamed: "Rw1.png"),
                                         SKTexture(imageNamed: "Rw2.png"),
@@ -359,7 +357,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         ninja.name = "ninja"
         ninja.position = CGPoint(x: frame.midX, y: frame.minY + 200)
         ninja.yScale = 1.6
-        ninja.xScale = 1.1
+        ninja.xScale = 0.8
         ninja.physicsBody?.isDynamic = true
         ninja.physicsBody = SKPhysicsBody(texture: ninja.texture!, size: ninja.size)
         ninja.physicsBody?.affectedByGravity = false
@@ -512,14 +510,24 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
                 if nodeTouchedName == "shoot left" {
                     // flip bullet and ninja
                     aBullet.xScale = -0.5
-                    ninja.xScale = -1.1
+                    ninja.xScale = -1.2
                     let shootBullet = SKAction.moveTo(x: frame.minX - 200, duration: 1)
                     aBullet.run(shootBullet)
+                    // reset ninja size after switching sprit set
+                    ninja.run(changeAnimationImageDelay){
+                        self.ninja.xScale = -0.8
+                    }
                 } else if nodeTouchedName == "shoot right" {
                     let shootBullet = SKAction.moveTo(x: frame.maxX + 200, duration: 1)
-                    ninja.xScale = 1.1
+                    // flip ninja
+                    ninja.xScale = 1.2
                     aBullet.run(shootBullet)
+                    // reset ninja size after switching sprit set
+                    ninja.run(changeAnimationImageDelay){
+                        self.ninja.xScale = 0.8
+                    }
                 }
+                
             }
         }
     }
