@@ -12,7 +12,7 @@ import SpriteKit
 class GameScene: SKScene {
     // local variables to this scene
     let splashSceneBackground = SKSpriteNode(imageNamed: "splashSceneImage.png")
-    let moveToNextSceneDelay = SKAction.wait(forDuration: 1)
+    let moveToNextSceneDelay = SKAction.wait(forDuration: 2)
     
     override func didMove(to view: SKView) {
         // this is run when the scene loads
@@ -20,7 +20,7 @@ class GameScene: SKScene {
         /* Setup your scene here */
         self.backgroundColor = SKColor(red: 0.0, green:0.0, blue:0.0, alpha: 1.0)
         splashSceneBackground.name = "splash scene background"
-        splashSceneBackground.size = CGSize(width: frame.maxX, height: frame.maxY)
+        splashSceneBackground.size = CGSize(width: frame.size.width, height: frame.size.height)
         splashSceneBackground.position = CGPoint(x: frame.midX, y: frame.midY)
         self.addChild(splashSceneBackground)
         
@@ -64,7 +64,7 @@ class GameScene: SKScene {
 class LoadingScene: SKScene, SKPhysicsContactDelegate {
     // local variables to this scene
     let loadingScreenBackground = SKSpriteNode(imageNamed: "IMG_2340.JPG")
-    let moveToNextSceneDelay = SKAction.wait(forDuration: 1.5)
+    let moveToNextSceneDelay = SKAction.wait(forDuration: 3)
     
     override func didMove(to view: SKView) {
         // this is run when the scene loads
