@@ -9,7 +9,7 @@ import PlaygroundSupport
 
 import SpriteKit
 
-class SplashScene: SKScene {
+class GameScene: SKScene {
     // local variables to this scene
     let splashSceneBackground = SKSpriteNode(imageNamed: "splashSceneImage.png")
     let moveToNextSceneDelay = SKAction.wait(forDuration: 1)
@@ -20,8 +20,8 @@ class SplashScene: SKScene {
         /* Setup your scene here */
         self.backgroundColor = SKColor(red: 0.0, green:0.0, blue:0.0, alpha: 1.0)
         splashSceneBackground.name = "splash scene background"
-        splashSceneBackground.size = CGSize(width: frame.maxX, height: frame.maxY - 200)
-        splashSceneBackground.position = CGPoint(x: frame.midX, y: frame.midY - 100)
+        splashSceneBackground.size = CGSize(width: frame.maxX, height: frame.maxY)
+        splashSceneBackground.position = CGPoint(x: frame.midX, y: frame.midY)
         self.addChild(splashSceneBackground)
         
         splashSceneBackground.run(moveToNextSceneDelay) {
@@ -178,8 +178,8 @@ class MainMenuScene: SKScene, SKPhysicsContactDelegate {
         if let nodeTouchedName = nodeTouched.name {
             if nodeTouchedName == "start button" {
                 self.menuScreenBackground.removeAllActions()
-                let gameScene = GameScene(size: self.size)
-                self.view!.presentScene(gameScene)
+                let mainGameScene = MainGameScene(size: self.size)
+                self.view!.presentScene(mainGameScene)
             }
         }
         
@@ -281,7 +281,7 @@ class CreditsScene : SKScene {
     // end of scene
 }
 
-class GameScene : SKScene, SKPhysicsContactDelegate {
+class MainGameScene : SKScene, SKPhysicsContactDelegate {
     // local variables to this scene
     let gameSceneBackground = SKSpriteNode(imageNamed: "IMG_2620.JPG")
     var ninja = SKSpriteNode(imageNamed: "IMG_2601.PNG")
@@ -654,7 +654,7 @@ let screenWidth = screenSize.width
 let screenHeight = screenSize.height
 let frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
 
-let scene = SplashScene(size: frame.size)
+let scene = GameScene(size: frame.size)
 scene.scaleMode = SKSceneScaleMode.resizeFill
 
 
