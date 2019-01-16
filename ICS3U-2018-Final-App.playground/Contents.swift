@@ -293,12 +293,14 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
     
     let moveToNextSceneDelay = SKAction.wait(forDuration: 1)
     let changeAnimationImageDelay = SKAction.wait(forDuration: 1.5)
+    let shootDelay = SKAction.wait(forDuration: 0.2)
     
     var score : Int = 0
     var highscoreValue : Int = 0
     var enemies = [SKSpriteNode]()
     var bullets = [SKSpriteNode]()
     var enemySpeedRate : Double = 1.00
+    var userDidShoot = false
     let ninjaIdleArray : [SKTexture] = [SKTexture(imageNamed: "Ni1.png"),
                                         SKTexture(imageNamed: "Ni2.png"),
                                         SKTexture(imageNamed: "Ni3.png"),
@@ -310,6 +312,7 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
                                         SKTexture(imageNamed: "Ni9.png"),
                                         SKTexture(imageNamed: "Ni10.png")
                                         ]
+    
     let ninjaThrowArray : [SKTexture] = [SKTexture(imageNamed: "Nt1.png"),
                                         SKTexture(imageNamed: "Nt2.png"),
                                         SKTexture(imageNamed: "Nt3.png"),
@@ -356,8 +359,8 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
         
         ninja.name = "ninja"
         ninja.position = CGPoint(x: frame.midX, y: frame.minY + 200)
-        ninja.yScale = 1.6
-        ninja.xScale = 0.8
+        ninja.yScale = 1.8
+        ninja.xScale = 1
         ninja.physicsBody?.isDynamic = true
         ninja.physicsBody = SKPhysicsBody(texture: ninja.texture!, size: ninja.size)
         ninja.physicsBody?.affectedByGravity = false
@@ -369,14 +372,14 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
         ninja.zPosition = 6.0
         
         shootRight.name = "shoot right"
-        shootRight.position = CGPoint(x: frame.midX + 400, y: frame.minY + 80)
+        shootRight.position = CGPoint(x: frame.maxX - 100, y: frame.minY + 80)
         shootRight.setScale(0.4)
         shootRight.alpha = 0.8
         self.addChild(shootRight)
         shootRight.zPosition = 5.0
         
         shootLeft.name = "shoot left"
-        shootLeft.position = CGPoint(x: frame.midX - 400, y: frame.minY + 80)
+        shootLeft.position = CGPoint(x: frame.minX + 100, y: frame.minY + 80)
         shootLeft.setScale(0.4)
         shootRight.alpha = 0.8
         self.addChild(shootLeft)
@@ -409,6 +412,10 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
         let spawnEnemyChance = Double(arc4random_uniform(100) + 1)
         if spawnEnemyChance <= enemySpeedRate {
             spawnEnemy()
+            // make sure the speed rate doesnt get too high, making the spawned enemies not move becuase the time interaval to move becomes < 0
+            if enemySpeedRate >= 18 {
+                enemySpeedRate = 18
+            }
         }
         
         // remove off screen missiles
@@ -442,7 +449,7 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
             score += 2
             
             // speed up enemies
-            enemySpeedRate += 0.25
+            enemySpeedRate += 0.15
             
             if score > highscoreValue {
                 highscoreValue = score
@@ -481,12 +488,17 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
         
         // check if shoot but†ons were clicked
         if let nodeTouchedName = nodeTouched.name{
-            if nodeTouchedName == "shoot right" || nodeTouchedName == "shoot left"  {
+            if (nodeTouchedName == "shoot right" || nodeTouchedName == "shoot left") && userDidShoot == false {
                 // animate ninja
-                //ninja.removeAllActions()
                 let animateNinjaThrow = SKAction.animate(with: ninjaThrowArray, timePerFrame: 0.15)
                 ninja.run(animateNinjaThrow)
                 
+                // make user unable to spam 
+                userDidShoot = true
+                shootRight.run(shootDelay){
+                    // after 0.1 seconds, user can shoot again
+                    self.userDidShoot = false
+                }
                 // shoot bullet
                 let aBullet = SKSpriteNode(imageNamed: "IMG_2623.PNG")
                 aBullet.position = CGPoint(x: frame.midX, y: frame.minY + 200)
@@ -510,21 +522,21 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
                 if nodeTouchedName == "shoot left" {
                     // flip bullet and ninja
                     aBullet.xScale = -0.5
-                    ninja.xScale = -1.2
+                    ninja.xScale = -1.5
                     let shootBullet = SKAction.moveTo(x: frame.minX - 200, duration: 1)
                     aBullet.run(shootBullet)
-                    // reset ninja size after switching sprit set
+                    // reset ninja size after switching sprite set
                     ninja.run(changeAnimationImageDelay){
-                        self.ninja.xScale = -0.8
+                        self.ninja.xScale = -1
                     }
                 } else if nodeTouchedName == "shoot right" {
                     let shootBullet = SKAction.moveTo(x: frame.maxX + 200, duration: 1)
                     // flip ninja
-                    ninja.xScale = 1.2
+                    ninja.xScale = 1.5
                     aBullet.run(shootBullet)
-                    // reset ninja size after switching sprit set
+                    // reset ninja size after switching sprite set
                     ninja.run(changeAnimationImageDelay){
-                        self.ninja.xScale = 0.8
+                        self.ninja.xScale = 1
                     }
                 }
                 
@@ -544,7 +556,7 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
     
     func spawnEnemy() {
         let aSingleEnemy = SKSpriteNode(imageNamed: "IMG_2612.PNG")
-        aSingleEnemy.setScale(1.45)
+        aSingleEnemy.setScale(1.5)
         let enemySpawnSide = Int(arc4random_uniform(2))
         var enemyStartPostitionX = 0
         if enemySpawnSide == 0 {
@@ -554,7 +566,7 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
             // spawn enemy on right side of screen, 100 pixels off
             enemyStartPostitionX = Int(frame.width + 100) 
             // flip image to face center
-             aSingleEnemy.xScale = -1.45
+             aSingleEnemy.xScale = -1.5
         }
         
         aSingleEnemy.position = CGPoint(x: enemyStartPostitionX, y: Int(frame.minY + 200))
