@@ -287,6 +287,8 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
     var ninja = SKSpriteNode(imageNamed: "IMG_2601.PNG")
     let shootRight = SKSpriteNode(imageNamed: "IMG_2441.PNG")
     let shootLeft = SKSpriteNode(imageNamed: "IMG_2440.PNG")
+    let moveLeft = SKSpriteNode(imageNamed: "IMG_2464.PNG")
+    let moveRight = SKSpriteNode(imageNamed: "IMG_2465.PNG")
     
     let scoreLabel = SKLabelNode(fontNamed: "Avenir-BlackOblique")
     let highscoreLabel = SKLabelNode(fontNamed: "Avenir-BlackOblique")
@@ -311,29 +313,29 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
                                         SKTexture(imageNamed: "Ni8.png"),
                                         SKTexture(imageNamed: "Ni9.png"),
                                         SKTexture(imageNamed: "Ni10.png")
-                                        ]
+    ]
     
     let ninjaThrowArray : [SKTexture] = [SKTexture(imageNamed: "Nt1.png"),
-                                        SKTexture(imageNamed: "Nt2.png"),
-                                        SKTexture(imageNamed: "Nt3.png"),
-                                        SKTexture(imageNamed: "Nt4.png"),
-                                        SKTexture(imageNamed: "Nt5.png"),
-                                        SKTexture(imageNamed: "Nt6.png"),
-                                        SKTexture(imageNamed: "Nt7.png"),
-                                        SKTexture(imageNamed: "Nt8.png"),
-                                        SKTexture(imageNamed: "Nt9.png"),
-                                        SKTexture(imageNamed: "Nt10.png")
-                                        ]
+                                         SKTexture(imageNamed: "Nt2.png"),
+                                         SKTexture(imageNamed: "Nt3.png"),
+                                         SKTexture(imageNamed: "Nt4.png"),
+                                         SKTexture(imageNamed: "Nt5.png"),
+                                         SKTexture(imageNamed: "Nt6.png"),
+                                         SKTexture(imageNamed: "Nt7.png"),
+                                         SKTexture(imageNamed: "Nt8.png"),
+                                         SKTexture(imageNamed: "Nt9.png"),
+                                         SKTexture(imageNamed: "Nt10.png")
+    ]
     
     let enemyWalkingArray : [SKTexture] = [SKTexture(imageNamed: "Rw1.png"),
-                                        SKTexture(imageNamed: "Rw2.png"),
-                                        SKTexture(imageNamed: "Rw3.png"),
-                                        SKTexture(imageNamed: "Rw4.png"),
-                                        SKTexture(imageNamed: "Rw5.png"),
-                                        SKTexture(imageNamed: "Rw6.png"),
-                                        SKTexture(imageNamed: "Rw7.png"),
-                                        SKTexture(imageNamed: "Rw8.png")
-                                        ]
+                                           SKTexture(imageNamed: "Rw2.png"),
+                                           SKTexture(imageNamed: "Rw3.png"),
+                                           SKTexture(imageNamed: "Rw4.png"),
+                                           SKTexture(imageNamed: "Rw5.png"),
+                                           SKTexture(imageNamed: "Rw6.png"),
+                                           SKTexture(imageNamed: "Rw7.png"),
+                                           SKTexture(imageNamed: "Rw8.png")
+    ]
     
     // for collision detection
     let collisionBulletCategory: UInt32    = 1
@@ -384,6 +386,20 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
         shootRight.alpha = 0.8
         self.addChild(shootLeft)
         shootLeft.zPosition = 4.0
+        
+        moveLeft.name = "move left"
+        moveLeft.position = CGPoint(x: frame.minX + 220, y: frame.minY + 80)
+        moveLeft.setScale(0.2)
+        moveLeft.alpha = 0.8
+        self.addChild(moveLeft)
+        moveLeft.zPosition = 10.0
+        
+        moveRight.name = "move right"
+        moveRight.position = CGPoint(x: frame.maxX - 220, y: frame.minY + 80)
+        moveRight.setScale(0.2)
+        moveRight.alpha = 0.8
+        self.addChild(moveRight)
+        moveRight.zPosition = 10.5
         
         scoreLabel.text = "Score:" + String(score)
         scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
@@ -499,6 +515,7 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
                     // after 0.1 seconds, user can shoot again
                     self.userDidShoot = false
                 }
+                
                 // shoot bullet
                 let aBullet = SKSpriteNode(imageNamed: "IMG_2623.PNG")
                 aBullet.position = CGPoint(x: frame.midX, y: frame.minY + 200)
@@ -540,6 +557,10 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 
+            } else if nodeTouchedName == "move left" {
+                ninja.position = CGPoint(x: ninja.position.x - 10, y: ninja.position.y )
+            } else if nodeTouchedName == "move right" {
+                ninja.position = CGPoint(x: ninja.position.x + 10, y: ninja.position.y )
             }
         }
     }
@@ -566,7 +587,7 @@ class MainGameScene : SKScene, SKPhysicsContactDelegate {
             // spawn enemy on right side of screen, 100 pixels off
             enemyStartPostitionX = Int(frame.width + 100) 
             // flip image to face center
-             aSingleEnemy.xScale = -1.5
+            aSingleEnemy.xScale = -1.5
         }
         
         aSingleEnemy.position = CGPoint(x: enemyStartPostitionX, y: Int(frame.minY + 200))
